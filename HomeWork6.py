@@ -1,10 +1,13 @@
-import unittest
+from unittest import TestCase
 
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 
+from helpers.pages.Flights.flights_page import FlightsPage
+from helpers.pages.ProfileSettings.profile_settings_page import ProfilePage
 
-class FirstTestCase(unittest.TestCase):
+
+class TestProfileSettings(TestCase):
     def setUp(self):
         """
         Prescriptions:
@@ -20,17 +23,20 @@ class FirstTestCase(unittest.TestCase):
         self.driver.implicitly_wait(5)
         self.driver.get("https://www.onetwotrip.com")
 
-        self.driver.find_element_by_class_name("enter").click()
-        register_email_field = self.driver.find_element_by_name("auth_email")
-        register_password_field = self.driver.find_element_by_name("auth_pas")
+        self.profile_page = ProfilePage(self.driver)
+        self.flights = FlightsPage(self.driver)
+
+        self.flights.spreader.login_in_form_click()
+        register_email_field = self.flights.enter.get_login_email_field()
+        register_password_field = self.flights.enter.get_login_password_field()
 
         register_email_field.send_keys(self.user_email)
         register_password_field.send_keys(self.user_password)
-        self.driver.find_element_by_class_name("pos_but").click()
+        self.flights.enter.get_login_in_btn().click()
 
-        self.driver.find_element_by_class_name("knownUser").click()
+        self.flights.spreader.known_user_form_click()
         self.assertEqual(u"Профиль покупателя",
-                         self.driver.find_element_by_id("pageTitle").text)
+                         self.profile_page.profile.get_page_title())
 
     def test_input_correct_last_name(self):
         """
@@ -39,59 +45,34 @@ class FirstTestCase(unittest.TestCase):
             2.Push the 'Save changes' button.
             3.Refresh the current page.
         """
-        driver = self.driver
+        profile_page = self.profile_page
 
-        first_name_field = driver.find_element_by_id("input_firstName")
-        first_name_field.send_keys(self.user_first_name)
-        driver.find_element_by_id("button_saveContacts").click()
+        profile_page.contacts.get_user_last_name_field().send_keys(self.user_first_name)
+        profile_page.contacts.get_save_contacts_btn().click()
 
-        driver.refresh()
+        self.driver.refresh()
 
         """
         Expected result:
             The entered name was retained in the field.
         """
-        introduced_last_name = first_name_field.get_attribute("value")
-        self.assertEqual(introduced_last_name, self.user_first_name)
-
-    def test_go_to_hotels_page(self):
-        """
-        Steps:
-            1.Push the 'Find a hotel' button.
-            2.Check transition.
-        """
-        driver = self.driver
-
-        """ итак, СУПЕР браузер Mozilla при нажатии на кнопку (с переходом на ссылку) открывает новую вкладку в НОВОМ окне
-            (т.е. дублирует браузер и там открывает вкладку) следовательно у меня есть несколько путей решения этой проблемы:
-            1.Передавать свои настройки в браузер, чтобы открывать вкладку в текущем окне - http://stackoverflow.com/questions/24054404/how-to-change-firefox-settings-in-webdriver-test
-            2.Переключаться между окнами посредством ActionChains - http://stackoverflow.com/questions/28715942/how-do-i-switch-to-the-active-tab-in-selenium
-            3.Переключать фокус между окнами с помощью switch_to - мой выбор, правильно или нет это вопрос
-        """
-        driver.find_element_by_xpath("//*[@id='hotelCompare']").click()
-        driver.switch_to.window(driver.window_handles[1])
-
-        """
-        Expected result:
-            The transition took place.
-        """
-        self.assertIn("hotels", str(driver.current_url))
+        self.assertEqual(profile_page.contacts.get_user_last_name_value(), self.user_first_name)
 
     def test_autocomplete_email_field(self):
         """
         Steps:
             1.Check the 'email' field after autocomplete
         """
-        driver = self.driver
+        profile_page = self.profile_page
 
-        user_email_autocomplete = driver.find_element_by_xpath("//*[@id='form_contacts']/div[1]/div[2]/div").text
+        user_email_autocomplete = profile_page.contacts.get_user_email_field().text
 
         """
         Expected result:
             The email was autocomplete.
         """
-        self.assertEqual(user_email_autocomplete,
-                         self.user_email)
+        self.assertIn(self.user_email,
+                      user_email_autocomplete)
 
     def test_select_country(self):
         """
@@ -99,18 +80,34 @@ class FirstTestCase(unittest.TestCase):
             1.Select country in the 'Country' field
             2.Check the 'Country' field
         """
-        driver = self.driver
-        user_country_field = driver.find_element_by_name("country")
+        profile_page = self.profile_page
 
-        selected_user_country = Select(user_country_field)
+        selected_user_country = Select(profile_page.contacts.get_user_selected_country_field())
         selected_user_country.select_by_value(self.user_country.get(u"Сингапур"))
 
         """
         Expected result:
             The selected country retained in the field.
         """
-        self.assertEqual(user_country_field.get_attribute("value"),
+        self.assertEqual(profile_page.contacts.get_user_selected_country_value(),
                          self.user_country.get(u"Сингапур"))
+
+    def test_go_to_hotels_page(self):
+        """
+        Steps:
+            1.Push the 'Find a hotel' button.
+            2.Check transition.
+        """
+        profile_page = self.profile_page
+
+        profile_page.profile.get_find_hotels_btn().click()
+        self.driver.switch_to.window(self.driver.window_handles[1])
+
+        """
+        Expected result:
+            The transition took place.
+        """
+        self.assertIn("hotels", str(self.driver.current_url))
 
     def test_add_empty_passenger_to_address_book(self):
         """
@@ -119,21 +116,16 @@ class FirstTestCase(unittest.TestCase):
             2.Push the 'Save Changes' button.
             3.Check the 'Save Changes' button status (Displayed).
         """
-        driver = self.driver
+        profile_page = self.profile_page
 
-        save_button = driver.find_element_by_id("button_addPassenger")
-        save_button.click()
-        driver.find_element_by_id("button_savePassengers").click()
+        profile_page.passengers.get_add_passenger_btn().click()
+        profile_page.passengers.get_save_contacts_btn().click()
 
         """
         Expected result:
             The "Save" button is displayed on the screen.
         """
-        self.assertTrue(save_button.is_displayed())
+        self.assertTrue(profile_page.passengers.get_save_contacts_btn().is_displayed())
 
     def tearDown(self):
         self.driver.quit()
-
-
-if __name__ == "__main__":
-    unittest.main()
