@@ -13,3 +13,10 @@ class PassengersBlock(BaseComponent):
 
     def get_save_contacts_btn(self):
         return self.driver.find_element_by_id(self.elements_in_block["btn_save_passenger"])
+
+    def add_passenger(self):
+        self.get_add_passenger_btn().click()
+        self.get_save_contacts_btn().click()
+
+    def is_displayed_save_contacts_btn(self):
+        return self.get_save_contacts_btn().is_displayed()

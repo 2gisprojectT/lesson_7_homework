@@ -13,3 +13,6 @@ class ProfileBlock(BaseComponent):
 
     def get_page_title(self):
         return self.driver.find_element_by_id("pageTitle").text
+
+    def go_to_hotels_page(self):
+        self.get_find_hotels_btn().click()

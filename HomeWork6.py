@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 from selenium import webdriver
-from selenium.webdriver.support.select import Select
 
 from helpers.pages.Flights.flights_page import FlightsPage
 from helpers.pages.ProfileSettings.profile_settings_page import ProfilePage
@@ -26,29 +25,23 @@ class TestProfileSettings(TestCase):
         self.profile_page = ProfilePage(self.driver)
         self.flights = FlightsPage(self.driver)
 
-        self.flights.spreader.login_in_form_click()
-        register_email_field = self.flights.enter.get_login_email_field()
-        register_password_field = self.flights.enter.get_login_password_field()
+        self.flights.spreader.go_to_login_form()
+        self.flights.enter.login_in(self.user_email, self.user_password)
+        self.flights.spreader.go_to_known_user_form()
 
-        register_email_field.send_keys(self.user_email)
-        register_password_field.send_keys(self.user_password)
-        self.flights.enter.get_login_in_btn().click()
-
-        self.flights.spreader.known_user_form_click()
         self.assertEqual(u"Профиль покупателя",
                          self.profile_page.profile.get_page_title())
 
-    def test_input_correct_last_name(self):
+    def test_input_correct_first_name(self):
         """
         Steps:
-            1.Input last name in 'First Name' field.
+            1.Input first name in 'First Name' field.
             2.Push the 'Save changes' button.
             3.Refresh the current page.
         """
         profile_page = self.profile_page
 
-        profile_page.contacts.get_user_last_name_field().send_keys(self.user_first_name)
-        profile_page.contacts.get_save_contacts_btn().click()
+        profile_page.contacts.input_first_name(self.user_first_name)
 
         self.driver.refresh()
 
@@ -56,7 +49,8 @@ class TestProfileSettings(TestCase):
         Expected result:
             The entered name was retained in the field.
         """
-        self.assertEqual(profile_page.contacts.get_user_last_name_value(), self.user_first_name)
+        self.assertEqual(profile_page.contacts.get_user_first_name_value(),
+                         self.user_first_name)
 
     def test_autocomplete_email_field(self):
         """
@@ -65,7 +59,7 @@ class TestProfileSettings(TestCase):
         """
         profile_page = self.profile_page
 
-        user_email_autocomplete = profile_page.contacts.get_user_email_field().text
+        user_email_autocomplete = profile_page.contacts.get_user_email_text()
 
         """
         Expected result:
@@ -82,8 +76,7 @@ class TestProfileSettings(TestCase):
         """
         profile_page = self.profile_page
 
-        selected_user_country = Select(profile_page.contacts.get_user_selected_country_field())
-        selected_user_country.select_by_value(self.user_country.get(u"Сингапур"))
+        profile_page.contacts.select_user_country(self.user_country)
 
         """
         Expected result:
@@ -100,7 +93,7 @@ class TestProfileSettings(TestCase):
         """
         profile_page = self.profile_page
 
-        profile_page.profile.get_find_hotels_btn().click()
+        profile_page.profile.go_to_hotels_page()
         self.driver.switch_to.window(self.driver.window_handles[1])
 
         """
@@ -118,14 +111,13 @@ class TestProfileSettings(TestCase):
         """
         profile_page = self.profile_page
 
-        profile_page.passengers.get_add_passenger_btn().click()
-        profile_page.passengers.get_save_contacts_btn().click()
+        profile_page.passengers.add_passenger()
 
         """
         Expected result:
             The "Save" button is displayed on the screen.
         """
-        self.assertTrue(profile_page.passengers.get_save_contacts_btn().is_displayed())
+        self.assertTrue(profile_page.passengers.is_displayed_save_contacts_btn())
 
     def tearDown(self):
         self.driver.quit()
