@@ -23,7 +23,7 @@ class FirstTestCase(unittest.TestCase):
         position = slider.get_attribute('style')
         length = len(position)
         position = float(position[6:length - 2])
-        return 340 * (hour/24 - position/100)
+        return 340 * (hour / 24 - position / 100)
 
     def setUp(self):
         """
@@ -45,7 +45,25 @@ class FirstTestCase(unittest.TestCase):
         self.driver.find_element_by_xpath("//div[@class='filters__primaryExtended']").click()
 
     def tearDown(self):
-        self.driver.close()
+        self.driver.quit()
+
+    def work_with_filters(self, filter_xpath, asserttext, day=None, hour=None):
+        filt = self.driver.find_element_by_xpath(filter_xpath)
+        if not filt.is_selected():
+            filt.click()
+
+        if 0 < day < 8 and filter_xpath == "//label[@class='radiogroup__label'][3]":
+            WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'dataViewer__frames')))
+            self.driver.find_element_by_xpath("//div[@class='radiogroup _week']/label[" + str(day) + "]").click()
+        if -1 < hour < 25 and filter_xpath == "//label[@class='radiogroup__label'][3]":
+            WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'dataViewer__frames')))
+            action = ActionChains(self.driver)
+            action.drag_and_drop_by_offset(self.driver.find_element_by_class_name('filters__raderRunnerIn'),
+                                           self.slide_move(hour, self.driver.find_element_by_class_name('filters__raderRunner')), 0).perform()
+
+        WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'dataViewer__frames')))
+        text = self.driver.find_element_by_class_name('mixedResults__header').text
+        self.assertEqual(asserttext, text)
 
     def test_has_site(self):
         """
@@ -55,10 +73,7 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не имеющие сайта(их становится меньше)
         """
 
-        self.driver.find_element_by_xpath("//div[@class='filters__main']/div[3]/label[1]").click()
-        WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'dataViewer__frames')))
-        text = self.driver.find_element_by_class_name('mixedResults__header').text
-        self.assertEqual('621 организация', text)
+        self.work_with_filters("//label[@class='checkbox' and @title='Есть сайт']", '621 организация')
 
     def test_has_photos(self):
         """
@@ -68,10 +83,7 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не имеющие фото(их становится меньше)
         """
 
-        self.driver.find_element_by_xpath("//div[@class='filters__main']/div[3]/label[2]").click()
-        WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'dataViewer__frames')))
-        text = self.driver.find_element_by_class_name('mixedResults__header').text
-        self.assertEqual('101 организация', text)
+        self.work_with_filters("//label[@class='checkbox' and @title='Есть фото']", '102 организации')
 
     def test_has_card(self):
         """
@@ -81,10 +93,7 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не имеющие расчета по картам(их становится меньше)
         """
 
-        self.driver.find_element_by_xpath("//div[@class='filters__main']/div[3]/label[3]").click()
-        WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'dataViewer__frames')))
-        text = self.driver.find_element_by_class_name('mixedResults__header').text
-        self.assertEqual('263 организации', text)
+        self.work_with_filters("//label[@class='checkbox' and @title='Расчет по картам']", '263 организации')
 
     def test_work_all_time(self):
         """
@@ -94,10 +103,7 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не работающие круглосуточно(их становится меньше)
         """
 
-        self.driver.find_element_by_xpath("//div[@class='filters__workhours']/div/div/label[2]").click()
-        WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'dataViewer__frames')))
-        text = self.driver.find_element_by_class_name('mixedResults__header').text
-        self.assertEqual('13 организаций', text)
+        self.work_with_filters("//label[@class='radiogroup__label'][2]", '13 организаций')
 
     def test_work_select_time(self):
         """
@@ -109,17 +115,7 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не работающие в данное время(их становится меньше)
         """
 
-        self.driver.find_element_by_xpath("//div[@class='filters__workhours']/div/div/label[3]").click()
-        self.driver.find_element_by_xpath("//div[@class='radiogroup _week']/label[2]").click()
-
-        action = ActionChains(self.driver)
-        action.drag_and_drop_by_offset(self.driver.find_element_by_class_name('filters__raderRunnerIn'),
-                                       self.slide_move(20, self.driver.find_element_by_class_name('filters__raderRunner')), 0).perform()
-
-        WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'dataViewer__frames')))
-        text = self.driver.find_element_by_class_name('mixedResults__header').text
-        self.assertEqual('192 организации', text)
-
+        self.work_with_filters("//label[@class='radiogroup__label'][3]", '192 организации', 2, 20)
 
 if __name__ == "__main__":
     unittest.main()
