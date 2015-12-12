@@ -1,17 +1,18 @@
+#-*- coding:UTF-8 -*-
+from unittest import TestCase
 import unittest
 from selenium import webdriver
-from selenium.webdriver import ActionChains
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
+from page import Page
 
 
-class FirstTestCase(unittest.TestCase):
+
+class SeleniumTest(TestCase):
     """
     Test Cases:
     Проверка фильтров организаций
     """
 
+<<<<<<< HEAD
     def slide_move(self, hour, slider):
         """
         :param hour:  час, на который нужно передвинуть слайдер
@@ -25,6 +26,8 @@ class FirstTestCase(unittest.TestCase):
         position = float(position[6:length - 2])
         return 340 * (hour / 24 - position / 100)
 
+=======
+>>>>>>> WIP
     def setUp(self):
         """
         Preconditions:
@@ -35,14 +38,10 @@ class FirstTestCase(unittest.TestCase):
 
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(20)
-        self.driver.get('2gis.ru')
-
-        action = ActionChains(self.driver)
-        action.send_keys('компьютеры')
-        action.perform()
-
-        self.driver.find_element_by_class_name('searchBar__submit').click()
-        self.driver.find_element_by_xpath("//div[@class='filters__primaryExtended']").click()
+        self.page = Page(self.driver)
+        self.page.open("http://2gis.ru")
+        self.page.search_bar.search('компьютеры')
+        self.page.search_result.filters_open()
 
     def tearDown(self):
         self.driver.quit()
@@ -65,6 +64,20 @@ class FirstTestCase(unittest.TestCase):
         text = self.driver.find_element_by_class_name('mixedResults__header').text
         self.assertEqual(asserttext, text)
 
+    def work_with_filters(self, filter_name, asserttext, day=None, hour=None):
+        self.page.filters_scroller.check_filter(filter_name)
+
+        if day is not None and filter_name == 'work_select_time':
+            self.page.search_result.wait_load()
+            self.page.filters_scroller.select_day(day)
+        if -1 < hour < 25 and filter_name == 'work_select_time':
+            self.page.search_result.wait_load()
+            self.page.filters_scroller.select_hour(hour)
+
+        self.page.search_result.wait_load()
+        text = self.page.search_result.counter()
+        self.assertEqual(asserttext, text)
+
     def test_has_site(self):
         """
         Steps:
@@ -73,7 +86,11 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не имеющие сайта(их становится меньше)
         """
 
+<<<<<<< HEAD
         self.work_with_filters("//label[@class='checkbox' and @title='Есть сайт']", '621 организация')
+=======
+        self.work_with_filters('has_site', '621 организация')
+>>>>>>> WIP
 
     def test_has_photos(self):
         """
@@ -83,7 +100,11 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не имеющие фото(их становится меньше)
         """
 
+<<<<<<< HEAD
         self.work_with_filters("//label[@class='checkbox' and @title='Есть фото']", '102 организации')
+=======
+        self.work_with_filters('has_photo', '102 организации')
+>>>>>>> WIP
 
     def test_has_card(self):
         """
@@ -93,7 +114,11 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не имеющие расчета по картам(их становится меньше)
         """
 
+<<<<<<< HEAD
         self.work_with_filters("//label[@class='checkbox' and @title='Расчет по картам']", '263 организации')
+=======
+        self.work_with_filters('has_card', '263 организации')
+>>>>>>> WIP
 
     def test_work_all_time(self):
         """
@@ -103,7 +128,11 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не работающие круглосуточно(их становится меньше)
         """
 
+<<<<<<< HEAD
         self.work_with_filters("//label[@class='radiogroup__label'][2]", '13 организаций')
+=======
+        self.work_with_filters('work_all_time', '13 организаций')
+>>>>>>> WIP
 
     def test_work_select_time(self):
         """
@@ -115,7 +144,14 @@ class FirstTestCase(unittest.TestCase):
         отфильтровываются организации не работающие в данное время(их становится меньше)
         """
 
+<<<<<<< HEAD
         self.work_with_filters("//label[@class='radiogroup__label'][3]", '192 организации', 2, 20)
 
 if __name__ == "__main__":
     unittest.main()
+=======
+        self.work_with_filters('work_select_time', '193 организации', 'Вт', 20)
+
+if __name__ == '__main__':
+    unittest.main()
+>>>>>>> WIP
