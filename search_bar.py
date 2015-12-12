@@ -1,7 +1,6 @@
 from base_component import BaseComponent
 
 
-
 class SearchBar(BaseComponent):
     selectors = {
         'self': '.online__searchBar',

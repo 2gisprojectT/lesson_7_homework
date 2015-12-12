@@ -2,7 +2,6 @@ from selenium.webdriver import ActionChains
 from base_component import BaseComponent
 
 
-
 class FiltersScroller(BaseComponent):
 
     selectors = {
