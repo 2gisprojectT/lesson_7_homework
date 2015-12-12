@@ -5,6 +5,7 @@ from selenium import webdriver
 from page import Page
 
 
+
 class SeleniumTest(TestCase):
     """
     Test Cases:
@@ -29,11 +30,18 @@ class SeleniumTest(TestCase):
     def tearDown(self):
         self.driver.close()
 
+    def work_with_filters(self, filter_name, asserttext, day=None, hour=None):
+        self.page.filters_scroller.check_filter(filter_name)
 
-    def work_with_filters(self, checkboxtitle, asserttext):
-        self.page.filters_scroller.check_filter(checkboxtitle)
+        if day is not None and filter_name == 'work_select_time':
+            self.page.search_result.wait_load()
+            self.page.filters_scroller.select_day(day)
+        if -1 < hour < 25 and filter_name == 'work_select_time':
+            self.page.search_result.wait_load()
+            self.page.filters_scroller.select_hour(hour)
 
-        text = self.page.search_result.count()
+        self.page.search_result.wait_load()
+        text = self.page.search_result.counter()
         self.assertEqual(asserttext, text)
 
     def test_has_site(self):
@@ -65,6 +73,28 @@ class SeleniumTest(TestCase):
         """
 
         self.work_with_filters('has_card', '263 организации')
+
+    def test_work_all_time(self):
+        """
+        Steps:
+        1. нажать фильтр "круглосуточно"
+        Expected result:
+        отфильтровываются организации не работающие круглосуточно(их становится меньше)
+        """
+
+        self.work_with_filters('work_all_time', '13 организаций')
+
+    def test_work_select_time(self):
+        """
+        Steps:
+        1. нажать фильтр "В указанное время"
+        2. выбрать день недели(выбран вторник)
+        3. выбрать время (выбрано 20 часов)
+        Expected result:
+        отфильтровываются организации не работающие в данное время(их становится меньше)
+        """
+
+        self.work_with_filters('work_select_time', '193 организации', 'Вт', 20)
 
 if __name__ == '__main__':
     unittest.main()
