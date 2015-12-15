@@ -31,7 +31,7 @@ class SeleniumTest(TestCase):
         self.driver.close()
 
     def work_with_filters(self, filter_name, asserttext, day=None, hour=None):
-        self.page.filters_scroller.check_filter(filter_name)
+
 
         if day is not None and filter_name == 'work_select_time':
             self.page.search_result.wait_load()
@@ -51,8 +51,13 @@ class SeleniumTest(TestCase):
         Expected result:
         отфильтровываются организации не имеющие сайта(их становится меньше)
         """
+        filter_name = 'has_site'
+        asserttext = '621 организация'
+        self.page.filters_scroller.check_filter(filter_name)
 
-        self.work_with_filters('has_site', '621 организация')
+        self.page.search_result.wait_load()
+        text = self.page.search_result.counter()
+        self.assertEqual(asserttext, text)
 
     def test_has_photos(self):
         """
@@ -62,7 +67,13 @@ class SeleniumTest(TestCase):
         отфильтровываются организации не имеющие фото(их становится меньше)
         """
 
-        self.work_with_filters('has_photo', '102 организации')
+        filter_name = 'has_photo'
+        asserttext = '102 организации'
+        self.page.filters_scroller.check_filter(filter_name)
+
+        self.page.search_result.wait_load()
+        text = self.page.search_result.counter()
+        self.assertEqual(asserttext, text)
 
     def test_has_card(self):
         """
@@ -72,7 +83,13 @@ class SeleniumTest(TestCase):
         отфильтровываются организации не имеющие расчета по картам(их становится меньше)
         """
 
-        self.work_with_filters('has_card', '263 организации')
+        filter_name = 'has_card'
+        asserttext = '263 организации'
+        self.page.filters_scroller.check_filter(filter_name)
+
+        self.page.search_result.wait_load()
+        text = self.page.search_result.counter()
+        self.assertEqual(asserttext, text)
 
     def test_work_all_time(self):
         """
@@ -82,7 +99,13 @@ class SeleniumTest(TestCase):
         отфильтровываются организации не работающие круглосуточно(их становится меньше)
         """
 
-        self.work_with_filters('work_all_time', '13 организаций')
+        filter_name = 'work_all_time'
+        asserttext = '13 организаций'
+        self.page.filters_scroller.check_filter(filter_name)
+
+        self.page.search_result.wait_load()
+        text = self.page.search_result.counter()
+        self.assertEqual(asserttext, text)
 
     def test_work_select_time(self):
         """
@@ -94,7 +117,21 @@ class SeleniumTest(TestCase):
         отфильтровываются организации не работающие в данное время(их становится меньше)
         """
 
-        self.work_with_filters('work_select_time', '193 организации', 'Вт', 20)
+        filter_name = 'work_select_time'
+        asserttext = '193 организации'
+        day = 'Вт'
+        hour = 20
+        self.page.filters_scroller.check_filter(filter_name)
+
+        self.page.search_result.wait_load()
+        self.page.filters_scroller.select_day(day)
+
+        self.page.search_result.wait_load()
+        self.page.filters_scroller.select_hour(hour)
+
+        self.page.search_result.wait_load()
+        text = self.page.search_result.counter()
+        self.assertEqual(asserttext, text)
 
 if __name__ == '__main__':
     unittest.main()

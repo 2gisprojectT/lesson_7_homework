@@ -31,11 +31,12 @@ class FiltersScroller(BaseComponent):
          :return: значение в px, на которое нужно сдвинуть слайдер\n"
          340 - ширина слайдера\n"
         """
-        
+
+        width = 340
         position = self.driver.find_element_by_class_name(self.selectors['filter_time']).get_attribute('style')
         length = len(position)
         position = float(position[6:length - 2])
-        return 340 * (hour / 24 - position / 100)
+        return width * (hour / 24 - position / 100)
 
     def check_filter(self, tip):
         filter_name = self.driver.find_element_by_xpath(self.selectors[tip])
