@@ -30,20 +30,6 @@ class SeleniumTest(TestCase):
     def tearDown(self):
         self.driver.close()
 
-    def work_with_filters(self, filter_name, asserttext, day=None, hour=None):
-
-
-        if day is not None and filter_name == 'work_select_time':
-            self.page.search_result.wait_load()
-            self.page.filters_scroller.select_day(day)
-        if -1 < hour < 25 and filter_name == 'work_select_time':
-            self.page.search_result.wait_load()
-            self.page.filters_scroller.select_hour(hour)
-
-        self.page.search_result.wait_load()
-        text = self.page.search_result.counter()
-        self.assertEqual(asserttext, text)
-
     def test_has_site(self):
         """
         Steps:
