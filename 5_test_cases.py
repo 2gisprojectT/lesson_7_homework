@@ -2,6 +2,7 @@
 from unittest import TestCase
 from selenium import webdriver
 from helpers.pages.LoginForm.form_page import LoginForm
+from helpers.pages.PersonalPage.personal_info import PersonalPage
 
 
 class DropboxLoginTest(TestCase):
@@ -9,6 +10,7 @@ class DropboxLoginTest(TestCase):
         self.driver = webdriver.Firefox()
         self.driver.get("https://www.dropbox.com/login")
         self.form_page = LoginForm(self.driver)
+        self.personal_page = PersonalPage(self.driver)
 
     def tearDown(self):
         self.driver.quit()
@@ -92,13 +94,16 @@ class DropboxLoginTest(TestCase):
                 - Корректно заполнить поля «Адрес электронной почты» и «Пароль»
                 - Поставить галочку «Запомнить», если это необходимо
                 - Нажать кнопку «Войти»
-            4. Ожидаемый результат: Успешная авторизация пользователя, узнаем имя пользователя"""
+            4. Ожидаемый результат: Успешная авторизация пользователя, узнаем имя пользователя и выходим из аккаунта"""
         form_page = self.form_page.form
         form_page.input_email('2gistestemail@mail.ru')
         form_page.input_pass('2gistestenter')
         form_page.submit_sing_in()  # «Войти»
 
-        form_page.wait_page_elem('name')
-        result = self.driver.find_element_by_css_selector('#header-account-menu > span > button > span.name').text
+        personal_page = self.personal_page.name
+        result = personal_page.get_name_text()
         expect = ['Maxim Kolesnikov']
+        personal_page.click_on_name()
+        personal_page.click_logout()
+
         self.assertIn(result, expect)
