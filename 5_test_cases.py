@@ -27,9 +27,9 @@ class DropboxLoginTest(TestCase):
             4. Ожидаемый результат: Получаем ошибку «Неверное название домена (часть адреса эл. почты после символа @:
             ).»"""
         form_page = self.form_page.form
-        form_page.input_email('max@')
-        form_page.submit_sing_in()  # «Войти»
-        result = form_page.get_error_text()
+        form_page.input_email_submit_sign_in('max@')  # «Войти»
+
+        result = form_page.get_error()
         expect = ['Неверное название домена (часть адреса эл. почты после символа @: ).',
                   'The domain portion of the email address is invalid (the portion after the @: )']
         self.assertIn(result, expect)
@@ -43,8 +43,9 @@ class DropboxLoginTest(TestCase):
                 - Нажать кнопку «Войти»
             4. Ожидаемый результат: Получаем ошибку «Введите свой адрес электронной почты»"""
         form_page = self.form_page.form
-        form_page.wait_and_click_sing_in_button()
-        result = form_page.get_error_text()
+        form_page.click_sign_in_button()
+
+        result = form_page.get_error()
         expect = ['Введите свой адрес электронной почты.',
                   'Please enter your email']
         self.assertIn(result, expect)
@@ -60,9 +61,9 @@ class DropboxLoginTest(TestCase):
                 - Нажать кнопку «Войти»
             4. Ожидаемый результат: Получаем ошибку «Введен неверный адрес электронной почты.»"""
         form_page = self.form_page.form
-        form_page.input_email('макс@mail.ru')
-        form_page.submit_sing_in()  # «Войти»
-        result = form_page.get_error_text()
+        form_page.input_email_submit_sign_in('макс@mail.ru')  # «Войти»
+
+        result = form_page.get_error()
         expect = ['Введен неверный адрес электронной почты.',
                   'The e-mail you entered is invalid']
         self.assertIn(result, expect)
@@ -77,9 +78,9 @@ class DropboxLoginTest(TestCase):
                 - Нажать кнопку «Войти»
             4. Ожидаемый результат: Получаем ошибку «Введите пароль»"""
         form_page = self.form_page.form
-        form_page.input_email('max@mail.ru')
-        form_page.submit_sing_in()  # «Войти»
-        result = form_page.get_error_text()
+        form_page.input_email_submit_sign_in('max@mail.ru')  # «Войти»
+
+        result = form_page.get_error()
         expect = ['Введите пароль.',
                   'Please enter your password']
         self.assertIn(result, expect)
@@ -98,12 +99,11 @@ class DropboxLoginTest(TestCase):
         form_page = self.form_page.form
         form_page.input_email('2gistestemail@mail.ru')
         form_page.input_pass('2gistestenter')
-        form_page.submit_sing_in()  # «Войти»
+        form_page.submit_sign_in()  # «Войти»
 
         personal_page = self.personal_page.name
-        result = personal_page.get_name_text()
+        result = personal_page.get_name()
         expect = ['Maxim Kolesnikov']
         personal_page.click_on_name()
         personal_page.click_logout()
-
         self.assertIn(result, expect)

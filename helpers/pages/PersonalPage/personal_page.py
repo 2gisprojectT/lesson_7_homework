@@ -9,7 +9,7 @@ class PersonalPage(BaseComponent):
         'self': 'name'
     }
 
-    def get_name_text(self):
+    def get_name(self):
         return self.driver.find_element_by_css_selector('#header-account-menu > span > button > span.name').text
 
     def click_on_name(self):

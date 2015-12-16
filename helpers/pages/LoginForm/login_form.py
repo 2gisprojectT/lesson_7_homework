@@ -20,7 +20,7 @@ class LoginForm(BaseComponent):
         return WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, selector)))
 
-    def get_error_text(self):
+    def get_error(self):
         return self.driver.find_element_by_class_name(self.selectors["error_message"]).text
 
     def input_email(self, email):
@@ -29,8 +29,14 @@ class LoginForm(BaseComponent):
     def input_pass(self, password):
         self.get_page_elem(self.selectors["password_input"]).send_keys(password)
 
-    def submit_sing_in(self):
+    def submit_sign_in(self):
         self.get_page_elem(self.selectors["submit_button"]).click()
 
-    def wait_and_click_sing_in_button(self):
+    def click_sign_in_button(self):
         self.wait_page_elem(self.selectors["submit_button"]).click()
+
+    def input_email_submit_sign_in(self, email):
+        self.input_email(email)
+        self.submit_sign_in()
+
+
