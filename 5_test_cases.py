@@ -1,0 +1,109 @@
+# coding: utf-8
+from unittest import TestCase
+from selenium import webdriver
+from helpers.pages.LoginForm.form_page import LoginForm
+from helpers.pages.PersonalPage.personal_info import PersonalPage
+
+
+class DropboxLoginTest(TestCase):
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        self.driver.get("https://www.dropbox.com/login")
+        self.form_page = LoginForm(self.driver)
+        self.personal_page = PersonalPage(self.driver)
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test_email_without_domain_name(self):
+        """Описание тест-кейса: https://projectt2015.testrail.net/index.php?/cases/edit/253
+            1. Название: Поле ввода содержит знак «@» и корректные знаки перед ним, но не содержит доменное имя, пробуем
+             авторизоваться
+            2. Предпосылки: зайти на сайт https://www.dropbox.com/login
+            3. Шаги:
+                - Ввести адрес электронной почты без доменного имени, например «max@»
+                - Поставить галочку «Запомнить», если это необходимо
+                - Нажать кнопку «Войти»
+            4. Ожидаемый результат: Получаем ошибку «Неверное название домена (часть адреса эл. почты после символа @:
+            ).»"""
+        form_page = self.form_page.form
+        form_page.input_email_submit_sign_in('max@')  # «Войти»
+
+        result = form_page.get_error()
+        expect = ['Неверное название домена (часть адреса эл. почты после символа @: ).',
+                  'The domain portion of the email address is invalid (the portion after the @: )']
+        self.assertIn(result, expect)
+
+    def test_empty_email_input(self):
+        """Описание тест-кейса: https://projectt2015.testrail.net/index.php?/cases/view/249
+            1. Название: Поле ввода пустое, пробуем авторизироваться
+            2. Предпосылки: зайти на сайт https://www.dropbox.com/login
+            3. Шаги:
+                - Поставить галочку «Запомнить», если это необходимо
+                - Нажать кнопку «Войти»
+            4. Ожидаемый результат: Получаем ошибку «Введите свой адрес электронной почты»"""
+        form_page = self.form_page.form
+        form_page.click_sign_in_button()
+
+        result = form_page.get_error()
+        expect = ['Введите свой адрес электронной почты.',
+                  'Please enter your email']
+        self.assertIn(result, expect)
+
+    def test_impossible_email(self):
+        """Описание тест-кейса: https://projectt2015.testrail.net/index.php?/cases/view/251
+            1. Название: Поле ввода содержит кириллицу перед знаком «@» и корректное доменное имя, пробуем
+        авторизироваться
+            2. Предпосылки: зайти на сайт https://www.dropbox.com/login
+            3. Шаги:
+                - Ввести адрес электронной почты с содержанием кириллицы в имени почты например макс@mail.ru
+                - Поставить галочку «Запомнить», если это необходимо
+                - Нажать кнопку «Войти»
+            4. Ожидаемый результат: Получаем ошибку «Введен неверный адрес электронной почты.»"""
+        form_page = self.form_page.form
+        form_page.input_email_submit_sign_in('макс@mail.ru')  # «Войти»
+
+        result = form_page.get_error()
+        expect = ['Введен неверный адрес электронной почты.',
+                  'The e-mail you entered is invalid']
+        self.assertIn(result, expect)
+
+    def test_correct_email_and_empty_password(self):
+        """Описание тест-кейса: https://projectt2015.testrail.net/index.php?/cases/view/272
+            1. Название: Поле «Пароль» пустое, пробуем авторизоваться
+            2. Предпосылки: зайти на сайт https://www.dropbox.com/login
+            3. Шаги:
+                - Ввести корректный адрес электронной почты.
+                - Поставить галочку «Запомнить», если это необходимо
+                - Нажать кнопку «Войти»
+            4. Ожидаемый результат: Получаем ошибку «Введите пароль»"""
+        form_page = self.form_page.form
+        form_page.input_email_submit_sign_in('max@mail.ru')  # «Войти»
+
+        result = form_page.get_error()
+        expect = ['Введите пароль.',
+                  'Please enter your password']
+        self.assertIn(result, expect)
+
+    def test_entered_when_input_data_correct(self):
+        """Описание тест-кейса: https://projectt2015.testrail.net/index.php?/cases/view/230
+            1. Название: Успешная авторизация без автозаполнения
+            2. Предпосылки:
+                - Зайти на сайт https://www.dropbox.com/login
+                - Быть зарегистрированным и знать данные для полей «Адрес электронной почты» и «Пароль».
+            3. Шаги:
+                - Корректно заполнить поля «Адрес электронной почты» и «Пароль»
+                - Поставить галочку «Запомнить», если это необходимо
+                - Нажать кнопку «Войти»
+            4. Ожидаемый результат: Успешная авторизация пользователя, узнаем имя пользователя и выходим из аккаунта"""
+        form_page = self.form_page.form
+        form_page.input_email('2gistestemail@mail.ru')
+        form_page.input_pass('2gistestenter')
+        form_page.submit_sign_in()  # «Войти»
+
+        personal_page = self.personal_page.name
+        result = personal_page.get_name()
+        expect = ['Maxim Kolesnikov']
+        personal_page.click_on_name()
+        personal_page.click_logout()
+        self.assertIn(result, expect)
