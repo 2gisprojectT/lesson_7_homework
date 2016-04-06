@@ -3,6 +3,19 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+"""
+Название :
+Провека вывода ошибки при неверном вводе пароля
+
+Шаги :
+1. Ввести верный Email
+2. Нажать enter
+3. Ввести пароль
+4. Нажать enter
+
+Тест пройден:
+Выводится сообщение "Указан неправильный адрес или пароль"
+"""
 driver = webdriver.Firefox()
 driver.get("https://mail.google.com/")
 elem = driver.find_element_by_name("Email")
