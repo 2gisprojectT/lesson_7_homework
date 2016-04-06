@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 '''
-Тест-кейс "Ввод несуществующего email"
+Тест-кейс "Ввод несуществующего email в форме "забыли пароль""
  Шаги:
  1. Зайти на сайт "www.onetwotrip.com"
  2. Нажать "Личный кабинет"
@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
  4. В открывшемся окне ввести несуществующий email
  +
  Ожидание:
- +  Вывод сообщения об ошибке "Пользователя с таким email не существует" в браузере,
+ +  Вывод сообщения об ошибке "Пользователя с таким email не существует" в браузере.
 '''
 
 
