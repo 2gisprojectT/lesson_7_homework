@@ -12,7 +12,7 @@ class SeleniumTest2GIS(TestCase):
         1. Ввести в поле поиска адрес/название объекта
         2. Нажать enter
     Ожидаемый результат:
-        Ссылка на искомый объект появилась в списке результатов поиска(при условии наличии объекта в базе)
+        Ссылка на искомый объект появилась в списке результатов поиска(при условии наличия объекта в базе)
     """
 
     def setUp(self):
@@ -32,5 +32,4 @@ class SeleniumTest2GIS(TestCase):
         self.assertEqual("http://2gis.ru/novosibirsk/firm/141265769436866?queryState=center%2F82.891224%2C54.98376%2Fzoom%2F17", search_link)
 
     def tearDown(self):
-        self.driver.implicitly_wait(30)
         self.driver.quit()
