@@ -1,4 +1,5 @@
 import time
+import unittest
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -16,16 +17,30 @@ from selenium.webdriver.common.keys import Keys
 Тест пройден:
 Выводится сообщение "Указан неправильный адрес или пароль"
 """
-driver = webdriver.Firefox()
-driver.get("https://mail.google.com/")
-elem = driver.find_element_by_name("Email")
-elem.send_keys("doctorvra4@gmail.com")
-elem.send_keys(Keys.RETURN)
-time.sleep(1)
-elem1 = driver.find_element_by_name("Passwd")
-elem1.send_keys("123")
-elem1.send_keys(Keys.RETURN)
-time.sleep(1)
-assert "Указан неправильный адрес или пароль" in driver.page_source
-print("Тест пройден")
-driver.quit()
+
+
+class Test_2gis_Selenium(unittest.TestCase):
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        self.driver.get("https://mail.google.com/")
+
+
+    def test_pass(self):
+
+        elem = self.driver.find_element_by_name("Email")
+        elem.send_keys("doctorvra4@gmail.com")
+        elem.send_keys(Keys.RETURN)
+        time.sleep(1)
+        elem1 = self.driver.find_element_by_name("Passwd")
+        elem1.send_keys("123")
+        elem1.send_keys(Keys.RETURN)
+        time.sleep(1)
+        assert "Указан неправильный адрес или пароль" in self.driver.page_source
+        print("Тест пройден")
+
+    def tearDown(self):
+        self.driver.quit()
+
+
+if __name__ == "__main__":
+    unittest.main
