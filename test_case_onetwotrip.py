@@ -18,11 +18,13 @@ class DataInputTest(TestCase):
         self.driver.find_element_by_id("input_auth_email").send_keys(email)
         self.driver.find_element_by_id("input_auth_pas").send_keys(password)
         self.driver.find_element_by_class_name("pos_but").click()
+        self.driver.find_element_by_class_name("knownUser").click()
+        self.driver.implicitly_wait(10)
 
     def test_name_input(self):
         """
         Шаги воспроизведения:
-            [1] Переходим в свой профиль и вводим имя и фамилию в поля "Имя" и "Фамилия".
+            [1] Вводим имя и фамилию в поля "Имя" и "Фамилия".
             [2] Нажимаем кнопку "Сохранить изменения"
             [3] Обновляем страницу браузера.
             [4] Проверяем имя и фамилию в соответствии с ранее введеными.
@@ -32,8 +34,6 @@ class DataInputTest(TestCase):
         test_data = ["Иван", "Иванов"]
 
         driver = self.driver
-        driver.find_element_by_class_name("knownUser").click()
-        driver.implicitly_wait(10)
         input_firstname_field = driver.find_element_by_id("input_firstName")
         input_lastname_field = driver.find_element_by_id("input_lastName")
         save_button = driver.find_element_by_id("button_saveContacts")
@@ -53,7 +53,7 @@ class DataInputTest(TestCase):
         self.assertEqual(input_lastname_field.get_attribute("value"), test_data[1])
 
     def tearDown(self):
-        self.driver.close()
+        self.driver.quit()
 
 if __name__ == '__main__':
     unittest.main()
