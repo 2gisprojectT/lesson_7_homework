@@ -5,7 +5,7 @@ import time
 
 
 class SendGmail(TestCase):
-    def sending_mail(self):
+    def test_sending_mail(self):
         """
          Название :
          Корректная отправка сообщения
