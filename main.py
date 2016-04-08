@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 
-class Test2gisSelenium(unittest.TestCase):
+class TestGmailFailPassMsg(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.get("https://mail.google.com/")
