@@ -31,10 +31,9 @@ class TestOneTwoTrip(TestCase):
         self.driver = driver
 
     def test_setOrd(self):
-        i, is_display, driver = 0, True, self.driver
+        i, driver = 0, self.driver
         element = driver.find_element_by_css_selector('li.multiway')
         element.click()
-        i = 0
         while 1:
             try:
                 element = driver.find_element_by_id('from' + str(i))
