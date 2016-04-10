@@ -4,13 +4,13 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 
-class TestGmailFailPassMsg(unittest.TestCase):
+class TestGmailAuth(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.get("https://mail.google.com/")
         self.driver.implicitly_wait(5)
 
-    def test_pass(self):
+    def test_gmail_fail_password(self):
         """
         Название :
         Провека вывода ошибки при неверном вводе пароля
@@ -28,7 +28,7 @@ class TestGmailFailPassMsg(unittest.TestCase):
         passwd = self.driver.find_element_by_name("Passwd")
         passwd.send_keys("123")
         passwd.submit()
-        self.assertTrue("Указан неправильный адрес или пароль" in self.driver.page_source)
+        self.assertIn("Указан неправильный адрес или пароль",self.driver.page_source)
 
     def tearDown(self):
         self.driver.quit()
