@@ -14,10 +14,10 @@ class Test(TestCase):
         email = "2giskargapolovtest@gmail.com"
         passwd = "2GisKargapolovTestTest"
         self.driver = webdriver.Firefox()
+        self.driver.implicitly_wait(5)
         self.driver.get("http://mail.google.com/")
         self.driver.find_element_by_id("Email").send_keys(email)
         self.driver.find_element_by_id("next").click()
-        self.driver.implicitly_wait(5)
         self.driver.find_element_by_id("Passwd").send_keys(passwd)
         self.driver.find_element_by_id("signIn").click()
 
