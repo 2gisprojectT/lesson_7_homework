@@ -2,57 +2,67 @@ from selenium import webdriver
 from unittest import TestCase
 import unittest
 import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class SendGmail(TestCase):
-    def test_sending_mail(self):
-        """
-         Название :
-         Корректная отправка сообщения
+    """
+        Корректная отправка сообщения
+    """
 
-         Шаги :
-         1. Ввести Email
+    def setUp(self):
+        """
+        Предусловия:
+        1. Ввести Email
          2. Нажать "Далее"
          3. Ввести пароль
          4. Нажать "Войти"
-         5. Нажать "Написать"
-         6. Вввести Email получателя
-         7. Ввести текст сообщения
-         8. Нажать "Отправить"
+        """
+        self.driver = webdriver.Firefox()
+        self.driver.get("http://mail.google.com/")
+
+        elem = self.driver.find_element_by_id("Email")
+        elem.send_keys("fedosovdn95@gmail.com")
+        elem = self.driver.find_element_by_id("next")
+        elem.click()
+        self.wait = WebDriverWait(self.driver, 10)
+        elem = self.wait.until(EC.presence_of_element_located((By.ID, "Passwd")))
+        elem.send_keys("plavanye04051995")
+        elem = self.driver.find_element_by_id("signIn")
+        elem.click()
+
+
+    def test_sending_mail(self):
+        """
+         Шаги :
+         1. Нажать "Написать"
+         2. Вввести Email получателя
+         3. Ввести текст сообщения
+         4. Нажать "Отправить"
 
          Проверка:
          Выводится сообщение "Письмо отправлено. Просмотреть сообщение"
          """
-        driver = webdriver.Firefox()
-        driver.get("http://mail.google.com/")
-
-        elem = driver.find_element_by_id("Email")
-        elem.send_keys("fedosovdn95@gmail.com")
-        elem = driver.find_element_by_id("next")
-        elem.click()
-        time.sleep(1)
-        elem = driver.find_element_by_id("Passwd")
-        elem.send_keys("plavanye04051995")
-        elem = driver.find_element_by_id("signIn")
+        elem = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "z0")))
         elem.click()
 
-        time.sleep(5)
-        elem = driver.find_element_by_class_name("z0")
-        elem.click()
-
-        time.sleep(2)
-        elem = driver.find_element_by_name("to")
+        elem = self.wait.until(EC.presence_of_element_located((By.NAME, "to")))
         elem.send_keys("Arch.step.inc@gmail.com")
-        time.sleep(2)
-        elem = driver.find_element_by_id(":iq")
+        elem = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "LW-avf")))
         elem.send_keys("Hello, man!")
-        time.sleep(1)
-        driver.find_element_by_id(":hb").click()
+        elem = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id=":hm"]')))
+        elem.click()
 
-        time.sleep(2)
-        val = driver.find_element_by_class_name("vh").text
-        self.assertEqual(val,"Письмо отправлено. Просмотреть сообщение")
-        driver.quit()
+        #чтобы текст в поле успел поменяться
+        time.sleep(1)
+        val = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "vh")))
+        self.assertEqual(val.text,"Письмо отправлено. Просмотреть сообщение")
+
+
+    def tearDown(self):
+        self.driver.quit()
 
 
 if __name__ == '__main__':
