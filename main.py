@@ -1,6 +1,5 @@
 import unittest
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from unittest import TestCase
 
 
@@ -30,8 +29,9 @@ class Test(TestCase):
             Вывод сообщения о том, что писем с таким текстом в ящике не найдено.
         """
         search_text = "some_text"
-        self.driver.find_element_by_id("gbqfq").send_keys(search_text + Keys.RETURN)
-        self.assertIn("Писем не найдено.",self.driver.page_source)
+        self.driver.find_element_by_id("gbqfq").send_keys(search_text)
+        self.driver.find_element_by_id('gbqfb').click()
+        self.assertIn("Писем не найдено.", self.driver.page_source)
 
     def tearDown(self):
         self.driver.quit()
