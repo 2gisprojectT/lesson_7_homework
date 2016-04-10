@@ -31,7 +31,7 @@ class Test(TestCase):
         """
         search_text = "some_text"
         self.driver.find_element_by_id("gbqfq").send_keys(search_text + Keys.RETURN)
-        assert "Писем не найдено." in self.driver.page_source
+        self.assertIn("Писем не найдено.",self.driver.page_source)
 
     def tearDown(self):
         self.driver.quit()
