@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from unittest import TestCase
 import unittest
 
@@ -15,11 +14,11 @@ class RegisterTest(TestCase):
         self.name = ["Name", "Surname"]
         self.driver = webdriver.Firefox()
         self.driver.get("https://www.dropbox.com/")
+        self.driver.implicitly_wait(15)
         button_sign_in = self.driver.find_element_by_id("sign-in").click()
         input_login = self.driver.find_element_by_class_name("text-input-input").send_keys(self.login)
         input_password = self.driver.find_element_by_class_name("password-input").send_keys(self.password)
         button_enter = self.driver.find_element_by_class_name("login-button").click()
-        self.driver.implicitly_wait(10)
 
     def test_edit_name(self):
         """
@@ -33,16 +32,14 @@ class RegisterTest(TestCase):
         """
         driver = self.driver
         driver.find_element_by_class_name("avatar-wrapper").click()
-        driver.implicitly_wait(5)
         driver.find_element_by_class_name("standalone").click()
         window_after = self.driver.window_handles[1]
-        self.driver.switch_to_window(window_after)
+        self.driver.switch_to.window(window_after)
         button_edit = driver.find_element_by_id("edit-name-button").click()
         input_name = driver.find_elements_by_class_name("text-input-input")
         input_name[0].send_keys(self.name[0])
         input_name[1].send_keys(self.name[1])
         button_accept = driver.find_element_by_class_name("dbmodal-button").click()
-        driver.implicitly_wait(15)
         name_label = driver.find_element_by_id("name-label")
         self.assertEqual(str(self.name[0]) + " " + str(self.name[1]), name_label.text, "Неверно изменены имя и фамилия")
 
