@@ -55,10 +55,7 @@ class SendGmail(TestCase):
         elem = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id=":hm"]')))
         elem.click()
 
-        #чтобы текст в поле успел поменяться
-        time.sleep(1)
-        val = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "vh")))
-        self.assertEqual(val.text,"Письмо отправлено. Просмотреть сообщение")
+        self.wait.until(EC.text_to_be_present_in_element((By.CLASS_NAME, "vh"), "Письмо отправлено. Просмотреть сообщение"))
 
 
     def tearDown(self):
