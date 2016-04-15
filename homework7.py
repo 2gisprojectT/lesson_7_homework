@@ -12,23 +12,25 @@
 '''
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import time
+import unittest
 
-driver = webdriver.Firefox()
-driver.get("http://mail.google.com")
-elem = driver.find_element_by_class_name("need-help")
+class auto_test_Gmail(unittest.TestCase):
 
-elem.send_keys(Keys.RETURN)
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        self.driver.get("http://mail.google.com")
+        self.driver.implicitly_wait(5)
 
-time.sleep(1)
-radio = driver.find_element_by_css_selector("input[type='radio'][value='3']")
-radio.click()
-time.sleep(1)
+    def test_wrong_email(self):
+        key_help = self.driver.find_element_by_class_name("need-help")
+        key_help.send_keys(Keys.RETURN)
+        radio = self.driver.find_element_by_css_selector("input[type='radio'][value='3']")
+        radio.click()
+        email = self.driver.find_element_by_css_selector("[name='Email2']")
+        email.send_keys("This is not Email")
+        email.submit()
+        self.assertIn("Введите действительный адрес электронной почты.",self.driver.page_source)
 
-element = driver.find_element_by_css_selector("[name='Email2']")
-element.send_keys("This is not Email")
-element.send_keys(Keys.RETURN)
-time.sleep(1)
-assert "Введите действительный адрес электронной почты." in driver.page_source
-print("Тест завершен успешно")
-driver.quit()
+    def tearDown(self):
+        self.driver.quit()
+
