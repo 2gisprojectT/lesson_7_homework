@@ -14,7 +14,7 @@ class OttripTest(TestCase):
         self.driver.maximize_window()
         self.driver.get("http://www.onetwotrip.com/ru")
 
-    def test(self):
+    def test_input_non_existentEmail(self):
         """
         Тест-кейс "Проверка вывода сообщения об ошибке при вводе несуществующего email в форме "забыли пароль""
         Шаги:
@@ -32,11 +32,10 @@ class OttripTest(TestCase):
             "table.layout:nth-child(2) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > button:nth-child(1)").click()
         self.driver.find_element_by_id("RemindAuth")
         error = self.driver.find_element_by_class_name("Error")
-        self.assertIn("Пользователя с таким email не существует" in error.text)
+        self.assertIn("Пользователя с таким email не существует", error.text)
 
     def TearDown(self):
         self.driver.quit()
-
 
 if __name__ == '__main__':
     unittest.main()
