@@ -30,9 +30,8 @@ class OttripTest(TestCase):
         self.driver.find_element_by_id("input_remind_email").send_keys("llllll@mail.ru")
         self.driver.find_element_by_css_selector(
             "table.layout:nth-child(2) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > button:nth-child(1)").click()
-        self.driver.find_element_by_id("RemindAuth")
-        error = self.driver.find_element_by_class_name("Error")
-        self.assertIn("Пользователя с таким email не существует", error.text)
+        error = self.driver.find_element_by_css_selector("#RemindAuth > div:nth-child(3)").text
+        self.assertIn("Пользователя с таким email не существует", error)
 
     def TearDown(self):
         self.driver.quit()
