@@ -24,10 +24,10 @@ class Test(unittest.TestCase):
             Результат: в центре окна появилось сообщение об успешной доставке сообщения
         """
 
-        butt = WW(self.driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "z0"))).click()
-        destination = WW(self.driver, 10).until(EC.presence_of_element_located((By.NAME, "to"))).send_keys("arch.step.inc@gmail.com")
-        theme = self.driver.find_element_by_name("subjectbox").send_keys("Hello")
-        text = self.driver.find_element_by_class_name("LW-avf").send_keys("Hello", Keys.TAB, Keys.ENTER)
+        WW(self.driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "z0"))).click()
+        WW(self.driver, 10).until(EC.presence_of_element_located((By.NAME, "to"))).send_keys("arch.step.inc@gmail.com")
+        self.driver.find_element_by_name("subjectbox").send_keys("Hello")
+        self.driver.find_element_by_class_name("LW-avf").send_keys("Hello", Keys.TAB, Keys.ENTER)
 
         mes = WW(self.driver, 10).until(EC.text_to_be_present_in_element((By.CLASS_NAME, "vh"),"Письмо отправлено. Просмотреть сообщение"))
         self.assertTrue(mes)
